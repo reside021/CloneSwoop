@@ -8,7 +8,7 @@ public class Plane_Move : MonoBehaviour
     [SerializeField] private GameObject _plane;
     [SerializeField] private float _speed = 0.5f;
     private float radius;
-    private float angle;
+    private float angle = 0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,18 +18,24 @@ public class Plane_Move : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        angle = angle + _speed * Time.deltaTime;
 
         var x = Mathf.Cos(angle * _speed) * radius;
         var z = Mathf.Sin(angle * _speed) * radius;
-        var newCoord = new Vector3(x, _plane.transform.position.y, z);
-        var oldCoord = new Vector3(_plane.transform.position.x, _plane.transform.position.y, _plane.transform.position.z);
-        float dist = Vector3.Distance(newCoord, oldCoord);
-        var angleCub = Mathf.Sin(dist / radius);
-        transform.position = newCoord;
-        //Quaternion target = Quaternion.Euler(0, -3, 0);
-        //transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5.0f);
-        transform.rotation = Quaternion.Euler(new Vector3(0, 5, 0) * Time.deltaTime);
+        transform.position = new Vector3(x, _plane.transform.position.y, z);
+        angle = angle + Time.deltaTime * _speed;
+
+        if (angle > 360f)
+        {
+            angle = 0f;
+        }
+
+        //Quaternion rotation = Quaternion.AngleAxis(angleCub, Vector3.up);
+        //transform.rotation = rotation;
     }
 
 }
+
+
+//var oldCoord = new Vector3(_plane.transform.position.x, _plane.transform.position.y, _plane.transform.position.z);
+//float dist = Vector3.Distance(newCoord, oldCoord);
+//var angleCub = Mathf.Sin(dist / radius);

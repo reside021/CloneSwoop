@@ -7,18 +7,20 @@ public class Plane_Move : MonoBehaviour
 {
     [SerializeField] private GameObject _plane;
     [SerializeField] private float _speed = 0.5f;
+    [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private float _moduleForce = 1;
     private float radius;
     private float angle = 0f;
+    private Vector3 defaultPosition;
     // Start is called before the first frame update
     void Start()
     {
+        defaultPosition = _plane.transform.position;
         radius = Mathf.Sqrt(Mathf.Pow(_plane.transform.position.x, 2) + Mathf.Pow(_plane.transform.position.y, 2) + Mathf.Pow(_plane.transform.position.z, 2));
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-
         var x = Mathf.Cos(angle * _speed) * radius;
         var z = Mathf.Sin(angle * _speed) * radius;
         transform.position = new Vector3(x, _plane.transform.position.y, z);
@@ -29,13 +31,20 @@ public class Plane_Move : MonoBehaviour
             angle = 0f;
         }
 
-        //Quaternion rotation = Quaternion.AngleAxis(angleCub, Vector3.up);
-        //transform.rotation = rotation;
+        if (Input.GetMouseButton(0))
+        {
+            if (transform.position.y > 0.5) return;
+            //transform.position = new Vector3(x, _plane.transform.position.y + 0.02f,z);
+            _rigidbody.AddRelativeForce(Vector3.up * _moduleForce);
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+
+        if(collision.gameObject.tag == "Ground")
+        {
+            _plane.transform.position = defaultPosition;
+        }
     }
 
 }
-
-
-//var oldCoord = new Vector3(_plane.transform.position.x, _plane.transform.position.y, _plane.transform.position.z);
-//float dist = Vector3.Distance(newCoord, oldCoord);
-//var angleCub = Mathf.Sin(dist / radius);

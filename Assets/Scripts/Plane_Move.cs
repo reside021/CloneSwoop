@@ -9,6 +9,7 @@ public class Plane_Move : MonoBehaviour
     [SerializeField] private float _speed = 0.5f;
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private float _moduleForce = 1;
+    [SerializeField] private GameObject _gameOverUi;
     private float radius;
     private float angle = 0f;
     private Vector3 defaultPosition;
@@ -51,7 +52,9 @@ public class Plane_Move : MonoBehaviour
 
         if(collision.gameObject.tag == "Ground")
         {
-            _plane.transform.position = defaultPosition;
+            //_plane.transform.position = defaultPosition;
+            Time.timeScale = 0f;
+            _gameOverUi.SetActive(true);
         }
     }
 

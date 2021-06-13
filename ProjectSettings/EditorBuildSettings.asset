@@ -7,14 +7,11 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 0
     path: 
-    guid: d1c3109bdb54ad54c8a2b2838528e640
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/StartScreen.unity
     guid: ddc4f5db87768a9448af90c14e213eab
   - enabled: 1
     path: Assets/Scenes/Island.unity
     guid: 4f170578b82a09442916e6c78905a5d4
-  - enabled: 1
-    path: Assets/Scenes/PauseScreen.unity
-    guid: ae7b6b16e478b4f4ebfd568e2001604e
   m_configObjects: {}

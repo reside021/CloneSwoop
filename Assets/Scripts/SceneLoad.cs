@@ -8,6 +8,7 @@ public class SceneLoad : MonoBehaviour
     private bool gameIsPause = false;
 
     [SerializeField] private GameObject _pauseMenuUi;
+    [SerializeField] private GameObject _exitMenuUi;
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -40,6 +41,16 @@ public class SceneLoad : MonoBehaviour
         Time.timeScale = 1f;
         gameIsPause = false;
         SceneManager.LoadScene(numScenes);
+    }
+
+    public void ExitMessage()
+    {
+        _exitMenuUi.SetActive(true);
+    }
+
+    public void CancelExit()
+    {
+        _exitMenuUi.SetActive(false);
     }
 
     public void ExitApp()

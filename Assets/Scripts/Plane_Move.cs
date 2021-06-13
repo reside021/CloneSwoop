@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Plane_Move : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class Plane_Move : MonoBehaviour
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private float _moduleForce = 1;
     [SerializeField] private GameObject _gameOverUi;
+    [SerializeField] private Text _textScore;
+    public int score = 0;
     private float radius;
     private float angle = 0f;
     private Vector3 defaultPosition;
@@ -49,7 +52,6 @@ public class Plane_Move : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-
         if(collision.gameObject.tag == "Ground")
         {
             //_plane.transform.position = defaultPosition;
@@ -58,4 +60,19 @@ public class Plane_Move : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Cloud") {
+            //Time.timeScale = 0f;
+            other.gameObject.SetActive(false);
+        }
+
+        if (other.gameObject.tag == "Star")
+        {
+            //Time.timeScale = 0f;
+            score += 2;
+            other.gameObject.SetActive(false);
+            _textScore.text = score.ToString();
+        }
+    }
 }

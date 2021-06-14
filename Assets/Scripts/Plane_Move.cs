@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,23 +12,24 @@ public class Plane_Move : MonoBehaviour
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private float _moduleForce = 1;
     [SerializeField] private GameObject _gameOverUi;
-    [SerializeField] private Text _textScore;
+    [SerializeField] private TextMeshProUGUI _textScore;
     [SerializeField] private GameObject _propeller;
     [SerializeField] private Slider _slider;
     [SerializeField] private Image _fill;
-    private int score = 0;
+    private int score;
     private float radius;
-    private float angle = 0f;
+    private float angle;
     private Vector3 defaultPosition;
-    private float fuelSize = 100f;
     private float currentFuel;
     private GameObject fillGameObject;
     // Start is called before the first frame update
     void Start()
     {
+        score = 0;
+        angle = 0f;
         defaultPosition = _plane.transform.position;
         radius = Mathf.Sqrt(Mathf.Pow(_plane.transform.position.x, 2) + Mathf.Pow(_plane.transform.position.y-22, 2) + Mathf.Pow(_plane.transform.position.z, 2));
-        currentFuel = fuelSize;
+        currentFuel = 100f;
         fillGameObject = GameObject.Find("Fill Area");
     }
 
@@ -74,11 +76,34 @@ public class Plane_Move : MonoBehaviour
         {
             //_plane.transform.position = defaultPosition;
             Time.timeScale = 0f;
-            _gameOverUi.transform.GetChild(0).transform.GetChild(3).transform.GetChild(0).GetComponent<Text>().text = score.ToString();
+            _gameOverUi.transform.GetChild(0).transform.GetChild(3).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = score.ToString();
             _gameOverUi.SetActive(true);
+            SaveGame();
         }
     }
 
+    void SaveGame()
+    {
+        int lastNote = 0;
+        if (PlayerPrefs.HasKey("lastNote"))
+        {
+            lastNote = PlayerPrefs.GetInt("lastNote");
+            if(lastNote == 5)
+            {
+                lastNote = 0;
+            }
+            else
+            {
+                lastNote++;
+            }
+        }
+        var today = DateTime.Now;
+        string record = today + "&" + score;
+        string numRow = $"R{lastNote}";
+        PlayerPrefs.SetString(numRow, record);
+        PlayerPrefs.SetInt("lastNote", lastNote); ;
+        PlayerPrefs.Save();
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Cloud") {

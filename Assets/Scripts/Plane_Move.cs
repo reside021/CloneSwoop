@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,40 +12,27 @@ public class Plane_Move : MonoBehaviour
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private float _moduleForce = 1;
     [SerializeField] private GameObject _gameOverUi;
-    [SerializeField] private Text _textScore;
+    [SerializeField] private TextMeshProUGUI _textScore;
     [SerializeField] private GameObject _propeller;
     [SerializeField] private Slider _slider;
     [SerializeField] private Image _fill;
     [SerializeField] private GameObject [] _preset;
     private int score = 0;
-    private int count = 0;
+    private int countCircle = 0;
     private float radius;
     private float angle = 0f;
-    //private float zPosition = 0f;
-    //private float xPosition = 0f;
     private Vector3 defaultPosition;
-    private float fuelSize = 100f;
     private float currentFuel;
     private GameObject fillGameObject;
     // Start is called before the first frame update
     void Start()
     {
+        score = 0;
+        angle = 0f;
         defaultPosition = _plane.transform.position;
-        //zPosition = _plane.transform.position.z;
-        //xPosition = _plane.transform.position.x;
         radius = Mathf.Sqrt(Mathf.Pow(_plane.transform.position.x, 2) + Mathf.Pow(_plane.transform.position.y-22, 2) + Mathf.Pow(_plane.transform.position.z, 2));
-        currentFuel = fuelSize;
+        currentFuel = 100f;
         fillGameObject = GameObject.Find("Fill Area");
-    }
-
-    private void Update()
-    {
-        /*if (_plane.transform.position.x == 3.33f || _plane.transform.position.z == -27f)
-        {
-            //_preset[1].SetActive(false);
-            //_preset[2].SetActive(true);
-            Debug.Log("Error");
-        }*/
     }
 
     private void FixedUpdate()
@@ -92,9 +80,33 @@ public class Plane_Move : MonoBehaviour
         {
             //_plane.transform.position = defaultPosition;
             Time.timeScale = 0f;
-            _gameOverUi.transform.GetChild(0).transform.GetChild(3).transform.GetChild(0).GetComponent<Text>().text = score.ToString();
+            _gameOverUi.transform.GetChild(0).transform.GetChild(3).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = score.ToString();
             _gameOverUi.SetActive(true);
+            SaveGame();
         }
+    }
+
+    void SaveGame()
+    {
+        int lastNote = 0;
+        if (PlayerPrefs.HasKey("lastNote"))
+        {
+            lastNote = PlayerPrefs.GetInt("lastNote");
+            if (lastNote == 5)
+            {
+                lastNote = 0;
+            }
+            else
+            {
+                lastNote++;
+            }
+        }
+        var today = DateTime.Now;
+        string record = today + "&" + score;
+        string numRow = $"R{lastNote}";
+        PlayerPrefs.SetString(numRow, record);
+        PlayerPrefs.SetInt("lastNote", lastNote); ;
+        PlayerPrefs.Save();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -123,24 +135,24 @@ public class Plane_Move : MonoBehaviour
 
         if (other.gameObject.tag == "Cube")
         {
-            if (_preset[0].activeSelf == true && count == 0) {
+            if (_preset[0].activeSelf == true && countCircle == 0) {
                 _preset[0].SetActive(false);
                 _preset[1].SetActive(true);
             }
-            if (_preset[1].activeSelf == true && count == 1)
+            if (_preset[1].activeSelf == true && countCircle == 1)
             {
                 _preset[1].SetActive(false);
                 _preset[2].SetActive(true);
             }
-            if (_preset[2].activeSelf == true & count == 2)
+            if (_preset[2].activeSelf == true & countCircle == 2)
             {
                 for (int i = 0; i < _preset[2].transform.childCount; i++)
                 {
                     _preset[2].transform.GetChild(i).gameObject.SetActive(true);
                 }
-                count--;
+                countCircle--;
             }
-            count++;
+            countCircle++;
         }
     }
 }

@@ -12,23 +12,54 @@ public class Plane_Move : MonoBehaviour
     [SerializeField] private float _moduleForce = 1;
     [SerializeField] private GameObject _gameOverUi;
     [SerializeField] private Text _textScore;
-    public int score = 0;
+    [SerializeField] private GameObject _propeller;
+    [SerializeField] private Slider _slider;
+    [SerializeField] private Image _fill;
+    [SerializeField] private GameObject [] _preset;
+    private int score = 0;
+    private int count = 0;
     private float radius;
     private float angle = 0f;
+    //private float zPosition = 0f;
+    //private float xPosition = 0f;
     private Vector3 defaultPosition;
+    private float fuelSize = 100f;
+    private float currentFuel;
+    private GameObject fillGameObject;
     // Start is called before the first frame update
     void Start()
     {
         defaultPosition = _plane.transform.position;
+        //zPosition = _plane.transform.position.z;
+        //xPosition = _plane.transform.position.x;
         radius = Mathf.Sqrt(Mathf.Pow(_plane.transform.position.x, 2) + Mathf.Pow(_plane.transform.position.y-22, 2) + Mathf.Pow(_plane.transform.position.z, 2));
+        currentFuel = fuelSize;
+        fillGameObject = GameObject.Find("Fill Area");
+    }
+
+    private void Update()
+    {
+        /*if (_plane.transform.position.x == 3.33f || _plane.transform.position.z == -27f)
+        {
+            //_preset[1].SetActive(false);
+            //_preset[2].SetActive(true);
+            Debug.Log("Error");
+        }*/
     }
 
     private void FixedUpdate()
     {
+        if (currentFuel <= 0)
+        {
+            fillGameObject.SetActive(false);
+        }
+        _slider.value = currentFuel;
         var x = Mathf.Cos(angle * _speed) * radius;
         var z = Mathf.Sin(angle * _speed) * radius;
         transform.position = new Vector3(x, _plane.transform.position.y, z);
         angle = angle + Time.deltaTime * _speed;
+        _propeller.transform.Rotate(Vector3.right, Time.deltaTime * 1000f, Space.Self);
+        _fill.fillAmount = _slider.value;
 
         if (angle > 360f)
         {
@@ -43,19 +74,25 @@ public class Plane_Move : MonoBehaviour
         {
             if (_plane.transform.position.y <= 29f)
             {
-                if (Input.GetMouseButton(0))
+                if (currentFuel > 0)
                 {
-                    _rigidbody.AddForce(Vector3.up * _moduleForce);
+                    if (Input.GetMouseButton(0))
+                    {
+                        currentFuel -= 8 * Time.deltaTime;
+                        _rigidbody.AddForce(Vector3.up * _moduleForce);
+                    }
                 }
             }
         }
     }
+
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.tag == "Ground")
         {
             //_plane.transform.position = defaultPosition;
             Time.timeScale = 0f;
+            _gameOverUi.transform.GetChild(0).transform.GetChild(3).transform.GetChild(0).GetComponent<Text>().text = score.ToString();
             _gameOverUi.SetActive(true);
         }
     }
@@ -63,16 +100,47 @@ public class Plane_Move : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Cloud") {
-            //Time.timeScale = 0f;
             other.gameObject.SetActive(false);
+            currentFuel -= 20;
         }
 
         if (other.gameObject.tag == "Star")
         {
-            //Time.timeScale = 0f;
             score += 2;
             other.gameObject.SetActive(false);
             _textScore.text = score.ToString();
+        }
+
+        if (other.gameObject.tag == "StarFuel")
+        {
+            currentFuel += 20;
+            if (currentFuel > 100) 
+            {
+                currentFuel = 100;
+            }
+            other.gameObject.SetActive(false);
+        }
+
+        if (other.gameObject.tag == "Cube")
+        {
+            if (_preset[0].activeSelf == true && count == 0) {
+                _preset[0].SetActive(false);
+                _preset[1].SetActive(true);
+            }
+            if (_preset[1].activeSelf == true && count == 1)
+            {
+                _preset[1].SetActive(false);
+                _preset[2].SetActive(true);
+            }
+            if (_preset[2].activeSelf == true & count == 2)
+            {
+                for (int i = 0; i < _preset[2].transform.childCount; i++)
+                {
+                    _preset[2].transform.GetChild(i).gameObject.SetActive(true);
+                }
+                count--;
+            }
+            count++;
         }
     }
 }

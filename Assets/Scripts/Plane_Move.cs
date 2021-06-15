@@ -16,9 +16,11 @@ public class Plane_Move : MonoBehaviour
     [SerializeField] private GameObject _propeller;
     [SerializeField] private Slider _slider;
     [SerializeField] private Image _fill;
-    private int score;
+    [SerializeField] private GameObject [] _preset;
+    private int score = 0;
+    private int countCircle = 0;
     private float radius;
-    private float angle;
+    private float angle = 0f;
     private Vector3 defaultPosition;
     private float currentFuel;
     private GameObject fillGameObject;
@@ -46,6 +48,7 @@ public class Plane_Move : MonoBehaviour
         angle = angle + Time.deltaTime * _speed;
         _propeller.transform.Rotate(Vector3.right, Time.deltaTime * 1000f, Space.Self);
         _fill.fillAmount = _slider.value;
+
         if (angle > 360f)
         {
             angle = 0f;
@@ -70,6 +73,7 @@ public class Plane_Move : MonoBehaviour
             }
         }
     }
+
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.tag == "Ground")
@@ -88,7 +92,7 @@ public class Plane_Move : MonoBehaviour
         if (PlayerPrefs.HasKey("lastNote"))
         {
             lastNote = PlayerPrefs.GetInt("lastNote");
-            if(lastNote == 5)
+            if (lastNote == 5)
             {
                 lastNote = 0;
             }
@@ -104,20 +108,51 @@ public class Plane_Move : MonoBehaviour
         PlayerPrefs.SetInt("lastNote", lastNote); ;
         PlayerPrefs.Save();
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Cloud") {
-            //Time.timeScale = 0f;
             other.gameObject.SetActive(false);
             currentFuel -= 20;
         }
 
         if (other.gameObject.tag == "Star")
         {
-            //Time.timeScale = 0f;
             score += 2;
             other.gameObject.SetActive(false);
             _textScore.text = score.ToString();
+        }
+
+        if (other.gameObject.tag == "StarFuel")
+        {
+            currentFuel += 35;
+            if (currentFuel > 100) 
+            {
+                currentFuel = 100;
+            }
+            other.gameObject.SetActive(false);
+        }
+
+        if (other.gameObject.tag == "Cube")
+        {
+            if (_preset[0].activeSelf == true && countCircle == 0) {
+                _preset[0].SetActive(false);
+                _preset[1].SetActive(true);
+            }
+            if (_preset[1].activeSelf == true && countCircle == 1)
+            {
+                _preset[1].SetActive(false);
+                _preset[2].SetActive(true);
+            }
+            if (_preset[2].activeSelf == true & countCircle == 2)
+            {
+                for (int i = 0; i < _preset[2].transform.childCount; i++)
+                {
+                    _preset[2].transform.GetChild(i).gameObject.SetActive(true);
+                }
+                countCircle--;
+            }
+            countCircle++;
         }
     }
 }

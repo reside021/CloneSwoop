@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class Plane_Move : MonoBehaviour
 {
     [SerializeField] private GameObject _plane;
+    [SerializeField] private GameObject _plane2;
     [SerializeField] private float _speed = 0.5f;
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private float _moduleForce = 1;
@@ -48,6 +49,7 @@ public class Plane_Move : MonoBehaviour
         angle = angle + Time.deltaTime * _speed;
         _propeller.transform.Rotate(Vector3.right, Time.deltaTime * 1000f, Space.Self);
         _fill.fillAmount = _slider.value;
+        _plane2.transform.Rotate(0, 0, 0.2f);
 
         if (angle > 360f)
         {
@@ -66,6 +68,7 @@ public class Plane_Move : MonoBehaviour
                 {
                     if (Input.GetMouseButton(0))
                     {
+                        _plane2.transform.Rotate(0, 0, -0.7f);
                         currentFuel -= 8 * Time.deltaTime;
                         _rigidbody.AddForce(Vector3.up * _moduleForce);
                     }
@@ -125,7 +128,7 @@ public class Plane_Move : MonoBehaviour
 
         if (other.gameObject.tag == "StarFuel")
         {
-            currentFuel += 20;
+            currentFuel += 35;
             if (currentFuel > 100) 
             {
                 currentFuel = 100;

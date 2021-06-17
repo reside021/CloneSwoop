@@ -129,6 +129,7 @@ public class Plane_Move : MonoBehaviour
         if (other.gameObject.tag == "StarFuel")
         {
             currentFuel += 35;
+            fillGameObject.SetActive(true);
             if (currentFuel > 100) 
             {
                 currentFuel = 100;

@@ -13360,6 +13360,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _pauseMenuUi: {fileID: 750332247}
   _exitMenuUi: {fileID: 0}
+  _gameOverUi: {fileID: 965113778}
 --- !u!4 &1818610504
 Transform:
   m_ObjectHideFlags: 0

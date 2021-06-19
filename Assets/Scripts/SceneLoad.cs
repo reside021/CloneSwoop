@@ -9,17 +9,22 @@ public class SceneLoad : MonoBehaviour
 
     [SerializeField] private GameObject _pauseMenuUi;
     [SerializeField] private GameObject _exitMenuUi;
+    [SerializeField] private GameObject _gameOverUi;
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (_gameOverUi.activeSelf == false)
         {
-            if (gameIsPause)
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Resume();
-            }
-            else
-            {
-                Pause();
+                if (gameIsPause)
+                {
+                    Resume();
+                }
+                else
+                {
+                    Pause();
+                }
             }
         }
     }
